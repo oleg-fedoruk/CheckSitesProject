@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="post-entry">
+        <h2>{{ object.title }}</h2>
+        <p>{{ object.site }}</p>
+        <p>{{ object.is_active }}</p>
+    </div>
+
+    <br><br><br>
+<p><a href="{% url 'site_edit' object.pk %}"><button class="btn btn-success">Редактирование данных</button></a></p>
+<p><a href="{% url 'site_delete' object.pk %}"><button class="btn btn-danger">Удаление данных проверяемого сайта</button></a></p>
+{% endblock content %}

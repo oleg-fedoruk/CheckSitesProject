@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+    {% if user.is_authenticated %}
+        Здавствуйте, {{ user.username }}!
+        <br> <br>
+        {% if sites %}
+            <table class="table table-sm">
+                <thead>
+                  <tr>
+                      <th scope="col">Компания</th>
+                      <th scope="col">Сайт</th>
+                      <th scope="col">Проверка</th>
+                  </tr>
+                </thead>
+            {% for the_site in sites %}
+                <tr scope="row">
+                    <td><a href="{% url 'site_view' the_site.id %}">{{ the_site.title }}</a></td>
+                    <td>{{ the_site.site }}</td>
+                    <td>{{ the_site.is_active }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        {% else %}
+            <p>Нет ни одного сайта для проверки</p>
+        {% endif %}
+        <br> <br>
+        <a href="{% url 'site_new' %}"><button class="btn btn-primary">Внести новый сайт на проверку</button></a>
+        <br> <br>
+        <a href="{% url 'logout' %}"><button class="btn btn-success">Выйти</button></a>
+        <a href="{% url 'password_change' %}"><button class="btn btn-success">Изменить пароль</button></a>
+    {% else %}
+        <p>Вы не авторизованы.</p>
+        <a href="{% url 'login' %}">Войти</a>
+    {% endif %}
+{% endblock %}

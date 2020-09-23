@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Удалить сайт</h1>
+    <form method="post">
+        {% csrf_token %}
+        <p>Уверены, что хотите удалить данный сайт "{{ object.site }}"?</p>
+        <input type="submit" class="btn btn-danger" value="Подтвердить" />
+    </form>
+{% endblock %}
