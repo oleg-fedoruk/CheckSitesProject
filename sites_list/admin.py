@@ -3,7 +3,7 @@ from sites_list.models import Site
 
 
 class SiteAdmin(admin.ModelAdmin):
-    list_display = ['title', 'site', 'is_active']
+    list_display = ['title', 'site_url', 'is_active']
 
     actions = ['check_site', 'dont_check_site']
 

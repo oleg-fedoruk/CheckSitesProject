@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import check_sites_project.smtp_settings
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '&r^29c(^8*+(lti-qb3od1no*c2lpo92#9da6fq^7q*q5y0hax'
+SECRET_KEY = check_sites_project.smtp_settings.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'sites_list',
-    'django_cron',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -108,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -124,8 +125,15 @@ STATIC_URL = '/static/'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-CRON_CLASSES = [
-    'sites_list.cron.MyCronJob',
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = check_sites_project.smtp_settings.SECRET_EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = check_sites_project.smtp_settings.SECRET_EMAIL_HOST_PASSWORD
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+CRONJOBS = [
+    ('* * * * *', 'sites_list.cron.do'),
+    ('1 * * * *', 'sites_list.cron.every_hour_check'),
 ]

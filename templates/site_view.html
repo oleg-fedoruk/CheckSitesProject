@@ -1,13 +1,123 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="post-entry">
-        <h2>{{ object.title }}</h2>
-        <p>{{ object.site }}</p>
-        <p>{{ object.is_active }}</p>
-    </div>
+         <div class="col-4 mb-3">
+            <div>
+                <h6 class="mb-2">Уведомления отправляются:</h6>
+                {% for user_to_send_email in users_to_send_email %}
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" class="custom-control-input" id="{{ user_to_send_email }}" checked disabled>
+                      <label class="custom-control-label" for="{{ user_to_send_email }}">{{ user_to_send_email }}</label>
+                    </div>
+                {% empty %}
+                <p>Письма никому не отправляются...</p>
+                {% endfor %}
+            </div>
 
-    <br><br><br>
-<p><a href="{% url 'site_edit' object.pk %}"><button class="btn btn-success">Редактирование данных</button></a></p>
-<p><a href="{% url 'site_delete' object.pk %}"><button class="btn btn-danger">Удаление данных проверяемого сайта</button></a></p>
+            <form method="post" name="subscr_selected_user">
+                {% csrf_token %}
+                {{ send_mail_form.as_p }}
+                <input type="submit" class="btn btn-success btn-sm" name="user_selected" value="Закрепить отправку" />
+                <input type="submit" class="btn btn-success btn-sm" name="user_deleted" value="Удалить юзера из рассылки"/>
+            </form>
+
+            <hr class="my-4">
+
+             <form method="post" name="period" class="my-3">
+                 <h6 class="mb-2">Фильтр по датам:</h6>
+                {% csrf_token %}
+                {{ date_time.as_p }}
+                <input type="submit" class="btn btn-success btn-sm" name="date_filter_btn" value="Показать" />
+            </form>
+         </div>
+
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col">
+                    <h2 class="form-control">{{ site.title }}</h2>
+                </div>
+                <div class="col">
+                  <div class="form-control">{{ site.site_url }}</div>
+                </div>
+                <div class="col">
+                   <div class="form-control">
+                      {% if site.is_active %}
+                           Проверяется
+                      {% else %}
+                        Не&nbspпроверяется
+                      {% endif %}
+                   </div>
+                </div>
+            </div>
+
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="progress">
+                          <div class="progress-bar" role="progressbar" style="width: {{ uptime }}%;" aria-valuenow="{{ uptime }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                     Сайт работал  {{ uptime }} % времени от начала месяца.
+                    </div>
+                </div>
+
+             <div class="col-12 my-4">
+                  <div class="row justify-content-between">
+                      <a href="{% url 'site_edit' site.id %}"><button class="btn btn-primary btn-sm">Редактирование данных</button></a>
+                      <a href="{% url 'site_delete' site.id %}"><button class="btn btn-primary btn-sm">Удаление данных проверяемого сайта</button></a>
+                      <a href="{% url 'home' %}"><button class="btn btn-primary btn-sm">Назад</button></a>
+                  </div>
+             </div>
+
+
+            <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                      <th scope="col">Дата и время</th>
+                      <th scope="col">Сатус</th>
+                  </tr>
+                </thead>
+            {% for log in logs %}
+                <tr scope="row">
+                    <td>{{ log.created_at }}</td>
+                    <td>{{ log.status_code }}</td>
+                </tr>
+            {% empty %}
+                <p>Пока что логов нет</p>
+            {% endfor %}
+            </table>
+        </div>
+
+    {% if logs.paginator.num_pages > 1 %}
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm justify-content-center">
+        {% if logs.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ logs.previous_page_number }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+        {% endif %}
+        {% for num in logs.paginator.page_range %}
+        {% if logs.number == num %}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">
+                        {{ num }}
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+        {% elif num > logs.number|add:'-3' and num < logs.number|add:'3' %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if logs.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ logs.next_page_number }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+        {% endif %}
+              </ul>
+        </nav>
+    {% endif %}
+
 {% endblock content %}

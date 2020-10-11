@@ -3,7 +3,9 @@
 <h1>Удалить сайт</h1>
     <form method="post">
         {% csrf_token %}
-        <p>Уверены, что хотите удалить данный сайт "{{ object.site }}"?</p>
+        <p>Уверены, что хотите удалить данный сайт "{{ object.site_url }}"?</p>
         <input type="submit" class="btn btn-danger" value="Подтвердить" />
     </form>
+    <br>
+    <a href="{% url 'site_view' object.pk %}"><button class="btn btn-primary">Назад</button></a>
 {% endblock %}

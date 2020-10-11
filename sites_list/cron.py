@@ -1,12 +1,9 @@
-from django_cron import CronJobBase, Schedule
-from .services import get_sites_status
+from .services import get_sites_status, send_email_if_error_detected
 
 
-class MyCronJob(CronJobBase):
-    RUN_EVERY_MINS = 1
+def do():
+    get_sites_status()
 
-    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'sites_list.cron.MyCronJob'
 
-    def do(self):
-        get_sites_status()
+def every_hour_check():
+    send_email_if_error_detected()
